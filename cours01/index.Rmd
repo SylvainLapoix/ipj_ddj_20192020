@@ -63,7 +63,7 @@ Chacun de ces outils sera présenté, documenté et utilisé de manière concrè
 ### Documentation
 L'intégralité des contenus utilisés durant le cours est disponible sur la page Github de ce cours : https://github.com/SylvainLapoix/ipj_ddj_20192020.
 
-Les slides de ce cours sont disponibles en format HTML à la page suivante : https://sylvainlapoix.github.io/ipj_ddj_20192020/cours01
+Les slides de ce cours sont disponibles en format HTML à la page suivante : https://sylvainlapoix.github.io/ipj_ddj_20192020/cours01/
 
 ### Evaluation
 A la fin de chaque cours, je vous donnerai un petit exercice d'application à réaliser pour le cours suivant. J'en préciserai le sujet et le format. Un plus gros projet vous sera demandé pour l'évaluation finale.
@@ -183,13 +183,6 @@ class: center, bottom, inverse
 
 # L'heure de l'installation est venue !
 
----
-
-## Rstudio : votre interface
-
-![](./img/rstudio_interface.png)
-
-.footnote[Je vous recommande par ailleurs [les nombreuses "cheatsheet" mises à disposition par l'équipe de Rstudio](https://www.rstudio.com/resources/cheatsheets/).]
 
 ---
 
@@ -261,35 +254,68 @@ prenoms[2] # on appelle une valeur par son index*
 
 ## Structures de données 2/2
 
-* Matrices
-* Dataframes
+### Matrices
+Le format classique des maths : un type de données par structure.
+
+### Dataframes
+Le format "classique" des BDDs : un type de données par variable.
+
+A quoi s'ajoutent :
+* les lists ;
+* les facteurs ;
+* les tibbles (qui sont un autre nom des dataframes).
+
+
+---
+
+## Structure d'une base de donnée
+
+![](img/tidydata.png)
 
 ---
 
 ## Fonctions
 
-* fonctions exploratoires de base
-* paramètres
-* création de fonctions
+Fonctions exploratoires de base
+* summary()
+* typeof()
+* class()
+* lengh()
+* names()
+* trier avec order()
+
+Trucs utiles :
+* sample()
 
 ---
 
 ## Type de données (rappel)
 
-* numériques (integer et doubles / float)
-* chaînes de caractères
-* booléens
-* autres (dates et cie)
-* \#N/A et null
+* numériques :
+  * integer ;
+  * numeric.
+* character (chaînes de caractères) ;
+* logical (booléens)
+* complexs (dont date)
+
+Les "non formats" (≠0) :
+* \#N/A : marquer l'absence ou l'exclure quand c'est nécessaire.
+* null
 
 ---
 
 ## Packages
 
+* installer un package ;
+* invoquer un package.
+
 ---
 
-## Tidyverse : la référence de la data science
+## Rstudio : votre interface
 
+![](./img/rstudio_interface.png)
+
+.footnote[Je vous recommande par ailleurs [les nombreuses "cheatsheet" mises à disposition par l'équipe de Rstudio](https://www.rstudio.com/resources/cheatsheets/).]
 
 ---
 
@@ -320,6 +346,8 @@ class: center, top, inverse
 ---
 
 ## L'open data à la rescousse
+
+* 
 
 ---
 
