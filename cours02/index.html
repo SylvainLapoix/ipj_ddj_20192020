@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>IPJ - Datajournalisme</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Sylvain Lapoix" />
+    <meta name="date" content="2019-12-11" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# IPJ - Datajournalisme
+## Cours 2 : Traitement de la donnée
+### Sylvain Lapoix
+### 12/11/2019
+
+---
+
+
+background-image: url("http://giphygifs.s3.amazonaws.com/media/TT2zE430gSlHO/giphy.gif")
+class: center, top, inverse
+
+# 1. Charger / sauvegarder
+
+---
+
+## Gérer ses scripts
+
+Quelques conseils de base :
+1. créer un projet pour chaque sujet traité (ce cours, par exemple) et d'y organiser un "framework" ;
+2. créer un script pour chaque exploration de données (d'une ou plusieurs BDDs) ;
+3. stocker vos BDDs dans un dossier *"data"* ;
+4. sauvegarder souvent (idéalement, à chaque modification) ;
+5. toujours garder les BDDs originales ;
+6. créer des versions intermédiaires (notamment pour subseter et alléger le chargement) en sauvegardant vos dataframes en .csv (ou en .Rdata, éventuellement) ;
+7. nommer tout de manière claire, explicite et concise.
+
+---
+
+## Généralités sur le script
+
+Le script vous sert à enchaîner vos commandes et consigner vos manipulations. C'est un mélange de chaîne de montage et de carnet de notes.
+
+`## PARTIE -----` vous permet de créer une section et un point de navigation rapide (en bas à gauche de votre interface).
+
+Tout d'abord, **chargez les librairies indispensables** (je vous conseille d'ailleurs de systématiquement mettre en début de script toutes les libs utiles). Notamment le `tidyverse` qui contient `readr` donc les fonctions que nous utilisons.
+
+
+```r
+library(tidyverse)
+```
+
+
+Pour ne pas vous perdre, je vous conseille de paramétrer votre répertoire de travail (*working directory*) manuellement :
+* `getwd()` vous donne le PATH absolu de là où vous travaillez ;
+* `setwd("PATH")` vous permet de le modifier au profit du PATH indiqué.
+
+Cette manip sera utile pour utiliser les *chemins relatifs* par la suite.
+
+Puis **chargez les données dont vous aurez besoin en ligne de commande**.
+
+---
+
+### Charger les données
+
+Il existe des foncitons adaptées à chaque type de fichier. Je vous conseille d'utiliser le *chemin relatif* (ça vous obligera à ranger vos affaires au passage) :
+* `a &lt;- read_csv(PATH)` : pour les CSV séparés par des virgules ;
+* `b &lt;- read_csv2(PATH)` : pour les CSV séparés par des points virgules (ou SCSV) ;
+* `c &lt;- read_delim(PATH, sep="SEP")` : pour les fichiers séparés par d'autres signes.
+
+
+```r
+prenoms &lt;- read_csv2("../data/liste-des-prenoms-par-annee.csv")
+```
+
+
+Pour les fichiers Excel, vous pouvez utiliser la librairie **[xlsx](https://cran.r-project.org/web/packages/xlsx/index.html)** suivant la nomenclature suivante (avec les params adéquats) :
+* `d &lt;- read.xlsx(PATH, sheetIndex = 1, startRow = 4,as.data.frame=TRUE)`
+
+**Rappel** :
+Pensez à charger les libs ou packages nécessaires :
+* les fonctions `read_*` proviennent de la librairie `readr`, dont le tidyverse ;
+* la fonction `read.xlsx` provient de `xlsx`.
+
+---
+
+### Sauvegarder
+
+Il est utile de sauvegarder à plusieurs moments :
+* pour économiser les manipulations nécessaires à la constitution d'un subset ;
+* pour garder une version de votre BDD en l'état et reprendre vos manipulations plus tard ;
+* pour stocker et partager vos résultats.
+
+Pour sauvegarder, il vous suffit d'utiliser la fonction correspondant au format et d'y passer la variable où est stockée la structure de données et le path où vous voulez sauvegarder avec le nom du fichier cible :
+* `write_csv(a, "PATH/a.csv")` : pour sauvegarder un CSV ;
+* `save(b, "PATH/b.Rdata")` : pour sauvegarder un fichier Rdata.
+
+---
+
+background-image: url("https://media.giphy.com/media/ZdIDsxm4sNymApoC25/giphy.gif")
+class: center, top, inverse
+
+# 2. Premiers contacts avec une BDD
+
+---
+
+## Infos de base
+
+![](./img/environment_prenoms.png)
+
+Le panneau supérieur gauche vous offre un premier aperçu : nom de la variable où est stockée la structure, nbre d'obs, nbre de variables.
+
+#### Nom des variables
+
+
+```r
+names(prenoms)
+```
+
+```
+## [1] "CODE_INSEE"   "COMMUNE"      "ANNEE"        "SEXE"        
+## [5] "PRENOM"       "NOMBRE"       "ANNEE (DATE)"
+```
+
+Si vous n'êtes pas satisfait·e, c'est le moment de les réassigner (si possible : en bas de casse, sans espace et sans caractères spéciaux).
+
+---
+
+#### Aperçu
+
+La fonction "head" vous offre un premier aperçu avec les "n"" 1ères observations (6 par défaut) : structure, forme des valeurs, types des variables, etc.
+
+
+```r
+head(prenoms, n = 3) # vous pouvez aussi utiliser son inverse : tail()
+```
+
+```
+## # A tibble: 3 x 7
+##   CODE_INSEE COMMUNE ANNEE SEXE  PRENOM  NOMBRE `ANNEE (DATE)`
+##        &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;          &lt;dbl&gt;
+## 1      45234 ORLEANS  2019 M     Gabriel     26           2019
+## 2      45234 ORLEANS  2019 F     Louise      25           2019
+## 3      45234 ORLEANS  2019 M     Noé         22           2019
+```
+
+#### Synthèse
+
+
+```r
+glimpse(prenoms) # alternative à summary() dans le tidyverse
+```
+
+```
+## Observations: 80,865
+## Variables: 7
+## $ CODE_INSEE     &lt;dbl&gt; 45234, 45234, 45234, 45234, 45234, 45234, 45234, …
+## $ COMMUNE        &lt;chr&gt; "ORLEANS", "ORLEANS", "ORLEANS", "ORLEANS", "ORLE…
+## $ ANNEE          &lt;dbl&gt; 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2…
+## $ SEXE           &lt;chr&gt; "M", "F", "M", "M", "F", "M", "M", "M", "M", "F",…
+## $ PRENOM         &lt;chr&gt; "Gabriel", "Louise", "Noé", "Hugo", "Lina", "Maël…
+## $ NOMBRE         &lt;dbl&gt; 26, 25, 22, 20, 18, 16, 15, 14, 14, 14, 13, 13, 1…
+## $ `ANNEE (DATE)` &lt;dbl&gt; 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2…
+```
+
+---
+
+#### Diversité et distribution des valeurs
+
+
+```r
+unique(prenoms$ANNEE) # pour voir toutes les valeurs uniques
+```
+
+```
+##  [1] 2019 2018 2017 2016 2015 2010 2009 2008 2007 2006 2005 1997 1996 1995
+## [15] 1994 1993 1992 1991 1990 1989 1988 2014 2013 2012 2011 2004 2003 2002
+## [29] 2001 2000 1999 1998 1987 1986 1985 1984 1983 1982 1981 1980 1979 1978
+## [43] 1943 1942 1941 1940 1939 1938 1937 1936 1935 1934 1933 1932 1971 1970
+## [57] 1977 1976 1975 1974 1973 1972 1964 1963 1962 1961 1960 1959 1958 1957
+## [71] 1956 1955 1954 1953 1952 1969 1968 1967 1966 1965 1950 1949 1948 1947
+## [85] 1946 1945 1944 1931 1930 1929 1928 1951
+```
+
+```r
+table(prenoms$ANNEE) # pour obtenir le compte de l'occurrence de chacune
+```
+
+```
+## 
+## 1928 1929 1930 1931 1932 1933 1934 1935 1936 1937 1938 1939 1940 1941 1942 
+##  181  181  185  183  195  199  198  213  200  202  218  260  237  241  241 
+## 1943 1944 1945 1946 1947 1948 1949 1950 1951 1952 1953 1954 1955 1956 1957 
+##  258  226  281  302  309  304  331  334  336  339  361  372  368  387  404 
+## 1958 1959 1960 1961 1962 1963 1964 1965 1966 1967 1968 1969 1970 1971 1972 
+##  415  413  425  401  474  499  519  536  573  582  634  641  705  734  811 
+## 1973 1974 1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 
+##  781  871  863  859  903  868  897  958 1033 1057  995 1045 1029  915  950 
+## 1988 1989 1990 1991 1992 1993 1994 1995 1996 1997 1998 1999 2000 2001 2002 
+##  995 1005 1037 1068 1076 1109 1120 1080 1097 1137 1197 1219 1256 1356 1462 
+## 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 
+## 1564 1643 1673 1790 1834 1929 1910 1929 1979 2051 2053 2064 2106 2256 2194 
+## 2018 2019 
+## 2287 1957
+```
+
+
+---
+
+background-image: url("https://media.giphy.com/media/jTAfBmBgdMzwA/giphy.gif")
+class: center, top, inverse
+
+# 3. Manipulation de la BDD
+
+---
+
+## Structure d'une base de donnée
+
+![](img/tidydata.png)
+
+
+.pull-left[Cette structure de base est le modèle proposé par *Hadley Wickham*, créateur du `tidyverse`, le modèle **tidy data**.
+
+Ce schéma correspond aux modalités de manipulation d'une base de données. Aussi, c'est le vobaculaire que nous utiliserons à partir de maintenant (notamment pour le paramétrage des fonctions).]
+
+.pull-right[
+.right[
+![](./img/hadley.jpg)
+]
+]
+
+---
+
+### Sélectionner par index
+
+
+```r
+mtcars[10,] # pour choisir une observation par index
+```
+
+```
+##           mpg cyl  disp  hp drat   wt qsec vs am gear carb
+## Merc 280 19.2   6 167.6 123 3.92 3.44 18.3  1  0    4    4
+```
+
+```r
+mtcars[,3] # pour choisir une variable par index
+```
+
+```
+##  [1] 160.0 160.0 108.0 258.0 360.0 225.0 360.0 146.7 140.8 167.6 167.6
+## [12] 275.8 275.8 275.8 472.0 460.0 440.0  78.7  75.7  71.1 120.1 318.0
+## [23] 304.0 350.0 400.0  79.0 120.3  95.1 351.0 145.0 301.0 121.0
+```
+
+```r
+mtcars[2:4,] # pour choisir des obs consécutives par index
+```
+
+```
+##                 mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4 Wag  21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710     22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+```
+
+```r
+mtcars[c(2,6),] # pour choisir des obs non consécutives par index
+```
+
+```
+##                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Valiant       18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+```
+
+
+---
+
+### Aparté : les tests 1/2
+
+Un test est une opération qui consiste à vérifier une condition sur un objet :
+
+
+```r
+5 == 3 # chaque test renvoie une ou plusieurs valeurs booléennes
+```
+
+```
+## [1] FALSE
+```
+
+```r
+5 &lt; 3
+```
+
+```
+## [1] FALSE
+```
+
+```r
+5 &gt; 3
+```
+
+```
+## [1] TRUE
+```
+
+```r
+5 &gt;= 3
+```
+
+```
+## [1] TRUE
+```
+
+```r
+5 != 3
+```
+
+```
+## [1] TRUE
+```
+
+
+---
+
+### Aparté : les tests 2/2
+
+En R, un test appliqué à une structure de données à une dimension (vecteur, liste, etc.) renvoie un vecteur de valeurs booléennes : chaque valeur correspond au résultat du test sur la valeur de même index dans l'objet testé.
+
+
+```r
+prenoms[1:20,]$SEXE == "M"
+```
+
+```
+##  [1]  TRUE FALSE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE
+## [12]  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE FALSE  TRUE
+```
+
+Le vecteur ainsi produit permet de sélectionner des observations de manière conditionnelle.
+
+En clair :
+**Les tests sont la base de la sélection conditionnelle.**
+
+---
+
+## Le "data wrangling" avec le tidyverse
+
+Une grosse partie du travail sur les données consiste à les manipuler de façon à leur donner la forme nécessaire à leur manipulation. Ensemble de tâches qu'on désigne sous le nom de **"data wrangling\*"**.
+
+[Selon une enquête du New York Times](https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html), cette tâche prendrait 50 à 80% du temps des data scientists interrogés.
+
+Le tidyverse répond en partie à ce besoin : dispose d'outils efficaces et puissants pour rendre les données manipulables.
+
+Deux librairies sont spécifiquement conçus à cette fin :
+* dplyr : pour manipuler les données ;
+* tidyr : pour reformater (notamment en tidy data).
+
+.footnote[\* Je cherche encore [une traduction](https://twitter.com/SylvainLapoix/status/1193934916003729408).]
+
+
+---
+
+### Dplyr, pour bien explorer ses données
+
+#### Filter : pour la sélection conditionnelle
+
+Filter permet de sélectionner des observations sur la base d'un test sur une variable :
+
+
+```r
+filter(prenoms,NOMBRE &gt; 150) # permet de savoir quels prénoms ont été attribués plus de 150 fois la même année
+```
+
+```
+## # A tibble: 3 x 7
+##   CODE_INSEE COMMUNE ANNEE SEXE  PRENOM   NOMBRE `ANNEE (DATE)`
+##        &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;          &lt;dbl&gt;
+## 1      45234 ORLEANS  1965 F     Nathalie    155           1965
+## 2      45234 ORLEANS  1968 F     Nathalie    164           1968
+## 3      45234 ORLEANS  1966 F     Nathalie    156           1966
+```
+
+```r
+filter(prenoms,NOMBRE &gt; 130 &amp; SEXE == "M") # filter permet de filter sur plusieurs variables simultanément
+```
+
+```
+## # A tibble: 6 x 7
+##   CODE_INSEE COMMUNE ANNEE SEXE  PRENOM     NOMBRE `ANNEE (DATE)`
+##        &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt;
+## 1      45234 ORLEANS  1971 M     Stéphane      148           1971
+## 2      45234 ORLEANS  1968 M     Christophe    141           1968
+## 3      45234 ORLEANS  1966 M     Christophe    149           1966
+## 4      45234 ORLEANS  1967 M     Christophe    150           1967
+## 5      45234 ORLEANS  1970 M     Stéphane      143           1970
+## 6      45234 ORLEANS  1969 M     Christophe    136           1969
+```
+
+---
+
+#### Filter 2 : sélection fine avec stringr
+
+Des fonctions dîtes "helpers" permettent de réaliser des tests plus fins.
+
+Le package `stringr` offre plusieurs fonction de test. `str_detect()` permet par exemple de vérifier de manière partielle une chaîne de caractère et, ainsi, de récupérer les valeurs contenant une certaine expression :
+
+
+```r
+filter(prenoms, str_detect(PRENOM,"ë"))
+```
+
+```
+## # A tibble: 1,885 x 7
+##    CODE_INSEE COMMUNE ANNEE SEXE  PRENOM    NOMBRE `ANNEE (DATE)`
+##         &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;          &lt;dbl&gt;
+##  1      45234 ORLEANS  2019 M     Maël          16           2019
+##  2      45234 ORLEANS  2019 M     Raphaël       13           2019
+##  3      45234 ORLEANS  2019 M     Nathanaël      6           2019
+##  4      45234 ORLEANS  2019 F     Maëlys         3           2019
+##  5      45234 ORLEANS  2019 F     Abigaëlle      2           2019
+##  6      45234 ORLEANS  2019 F     Maëline        2           2019
+##  7      45234 ORLEANS  2019 F     Raphaëlle      2           2019
+##  8      45234 ORLEANS  2019 M     Tymaë          1           2019
+##  9      45234 ORLEANS  2019 F     Anaë           1           2019
+## 10      45234 ORLEANS  2019 M     Azaël          1           2019
+## # … with 1,875 more rows
+```
+
+---
+
+### Aparté : les opérateurs
+
+Plusieurs conditions peuvent être cumulées dans un filtre suivant diverses modalités.
+
+Pour cela, R propose plusieurs opérateurs :
+* `&amp;` (espérluette, se lit "*and*") : pour combiner deux conditions de façon stricte (l'une et l'autre doivent être vraies) ;
+* `|` (pipe, se lit "*or*") : pour deux conditions mutuellement exclusive, l'une ou l'autre doit être vraie mais pas les deux ;
+* `!` (se lit "*not*") : pour nier une condition (pratique pour formuler "tout sauf ...").
+
+
+
+```r
+filter(prenoms,NOMBRE &gt; 130 | SEXE == "M") # à comparer avec le 2è filtre de la 1ère slide sur la fonction filter()
+```
+
+```
+## # A tibble: 37,814 x 7
+##    CODE_INSEE COMMUNE ANNEE SEXE  PRENOM  NOMBRE `ANNEE (DATE)`
+##         &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;          &lt;dbl&gt;
+##  1      45234 ORLEANS  2019 M     Gabriel     26           2019
+##  2      45234 ORLEANS  2019 M     Noé         22           2019
+##  3      45234 ORLEANS  2019 M     Hugo        20           2019
+##  4      45234 ORLEANS  2019 M     Maël        16           2019
+##  5      45234 ORLEANS  2019 M     Gabin       15           2019
+##  6      45234 ORLEANS  2019 M     Mathéo      14           2019
+##  7      45234 ORLEANS  2019 M     Théo        14           2019
+##  8      45234 ORLEANS  2019 M     Ibrahim     13           2019
+##  9      45234 ORLEANS  2019 M     Raphaël     13           2019
+## 10      45234 ORLEANS  2019 M     Antoine     12           2019
+## # … with 37,804 more rows
+```
+
+
+---
+
+### Aparté : les opérateurs 2
+
+**Attention** : les opérateurs `&amp;` et `|` doivent être placé entre deux tests, pas à l'intérieur d'un des tests. L'opérateur `!` doit être placé avant le test entre parenthèse.
+
+
+```r
+filter(prenoms,!(str_detect(PRENOM,"e")))
+```
+
+```
+## # A tibble: 39,101 x 7
+##    CODE_INSEE COMMUNE ANNEE SEXE  PRENOM  NOMBRE `ANNEE (DATE)`
+##         &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;          &lt;dbl&gt;
+##  1      45234 ORLEANS  2019 M     Noé         22           2019
+##  2      45234 ORLEANS  2019 M     Hugo        20           2019
+##  3      45234 ORLEANS  2019 F     Lina        18           2019
+##  4      45234 ORLEANS  2019 M     Maël        16           2019
+##  5      45234 ORLEANS  2019 M     Gabin       15           2019
+##  6      45234 ORLEANS  2019 M     Mathéo      14           2019
+##  7      45234 ORLEANS  2019 M     Théo        14           2019
+##  8      45234 ORLEANS  2019 M     Ibrahim     13           2019
+##  9      45234 ORLEANS  2019 M     Raphaël     13           2019
+## 10      45234 ORLEANS  2019 M     Aaron       12           2019
+## # … with 39,091 more rows
+```
+
+
+---
+
+### Aparté : l'opérateur %in%
+
+En complément des opérateurs logiques usuels, le `tidyverse` ajoute un opérateur très pratique : le `%in%` qui permet d'établir une égalité non pas avec une valeur mais avec n'importe laquelle des valeurs contenues dans un vecteur.
+
+
+```r
+filter(prenoms, PRENOM %in% c("Yannick","Yanick","Yanik"))
+```
+
+```
+## # A tibble: 94 x 7
+##    CODE_INSEE COMMUNE ANNEE SEXE  PRENOM  NOMBRE `ANNEE (DATE)`
+##         &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;          &lt;dbl&gt;
+##  1      45234 ORLEANS  2016 M     Yannick      1           2016
+##  2      45234 ORLEANS  2006 M     Yannick      1           2006
+##  3      45234 ORLEANS  1997 M     Yannick      1           1997
+##  4      45234 ORLEANS  1992 M     Yannick      1           1992
+##  5      45234 ORLEANS  1991 M     Yannick      2           1991
+##  6      45234 ORLEANS  2011 M     Yannick      3           2011
+##  7      45234 ORLEANS  1999 M     Yanick       1           1999
+##  8      45234 ORLEANS  1986 M     Yannick      2           1986
+##  9      45234 ORLEANS  1985 M     Yannick      6           1985
+## 10      45234 ORLEANS  1979 M     Yannick     13           1979
+## # … with 84 more rows
+```
+
+
+---
+
+#### Select : pour la sélection de variable
+
+La fonction `select()` permet de sélectionner des variables de manière littérale ou conditionnelle. Sa nomenclature est similaire à `filter()` :
+
+
+```r
+select(prenoms,PRENOM)[1:5,] # permet de ne retenir que la variagble PRENOM
+```
+
+```
+## # A tibble: 5 x 1
+##   PRENOM 
+##   &lt;chr&gt;  
+## 1 Gabriel
+## 2 Louise 
+## 3 Noé    
+## 4 Hugo   
+## 5 Lina
+```
+
+```r
+p &lt;- select(prenoms,c(ANNEE,SEXE,PRENOM,NOMBRE))
+p[1:3,]
+```
+
+```
+## # A tibble: 3 x 4
+##   ANNEE SEXE  PRENOM  NOMBRE
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1  2019 M     Gabriel     26
+## 2  2019 F     Louise      25
+## 3  2019 M     Noé         22
+```
+
+---
+
+#### Select 2 : les helpers
+
+`dplyr` propose également des fonctions helpers pour affiner la sélection. Comme pour `stringr` elles fonctionnent suivant des tests de détections de chaîne de caractère :
+
+
+```r
+select(prenoms, contains("ANNEE"))[1:3,]
+```
+
+```
+## # A tibble: 3 x 2
+##   ANNEE `ANNEE (DATE)`
+##   &lt;dbl&gt;          &lt;dbl&gt;
+## 1  2019           2019
+## 2  2019           2019
+## 3  2019           2019
+```
+
+---
+
+#### Mutate pour la création de variables
+
+`Mutate` permet de créer une nouvelle variable. Elle peut être soit conditionnelle, soit arbitraire (même valeur partout).
+
+
+```r
+mutate(p, majeur = ANNEE &lt; 2001)[1:3,] # ce test permet de savoir si les personnes à qui ont été attribués les prénoms sont majeures ou non
+```
+
+```
+## # A tibble: 3 x 5
+##   ANNEE SEXE  PRENOM  NOMBRE majeur
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;lgl&gt; 
+## 1  2019 M     Gabriel     26 FALSE 
+## 2  2019 F     Louise      25 FALSE 
+## 3  2019 M     Noé         22 FALSE
+```
+
+.footnote[Vous noterez ici qu'il s'agit d'une *"traduction"* d'une notion sociale en test informatique.]
+
+---
+
+#### Arrange pour trier par ordre
+
+
+```r
+arrange(p, NOMBRE)[1:3,]
+```
+
+```
+## # A tibble: 3 x 4
+##   ANNEE SEXE  PRENOM    NOMBRE
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;
+## 1  2019 M     Diadié         1
+## 2  2019 M     Edaiin         1
+## 3  2019 M     Sebastian      1
+```
+
+```r
+arrange(p, desc(NOMBRE))[1:3,] # le helper desc() permet de trier par ordre décroissant
+```
+
+```
+## # A tibble: 3 x 4
+##   ANNEE SEXE  PRENOM   NOMBRE
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;
+## 1  1968 F     Nathalie    164
+## 2  1966 F     Nathalie    156
+## 3  1965 F     Nathalie    155
+```
+
+---
+
+#### Arrange 2
+
+
+```r
+arrange(p, PRENOM)[1:3,] # arrange fonction aussi avec des strings
+```
+
+```
+## # A tibble: 3 x 4
+##   ANNEE SEXE  PRENOM NOMBRE
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;
+## 1  2017 M     Aadam       1
+## 2  2007 M     Aadam       1
+## 3  1973 M     Aadil       1
+```
+
+```r
+arrange(p, PRENOM, ANNEE)[1:3,] # et plusieurs critères
+```
+
+```
+## # A tibble: 3 x 4
+##   ANNEE SEXE  PRENOM NOMBRE
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;
+## 1  2007 M     Aadam       1
+## 2  2017 M     Aadam       1
+## 3  1973 M     Aadil       1
+```
+
+---
+
+#### Distinct pour les valeurs uniques
+
+
+```r
+distinct(p, ANNEE)
+```
+
+```
+## # A tibble: 92 x 1
+##    ANNEE
+##    &lt;dbl&gt;
+##  1  2019
+##  2  2018
+##  3  2017
+##  4  2016
+##  5  2015
+##  6  2010
+##  7  2009
+##  8  2008
+##  9  2007
+## 10  2006
+## # … with 82 more rows
+```
+
+
+#### Top_n pour un classement rapide
+
+
+```r
+top_n(p,5,NOMBRE)
+```
+
+```
+## # A tibble: 5 x 4
+##   ANNEE SEXE  PRENOM     NOMBRE
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
+## 1  1966 M     Christophe    149
+## 2  1965 F     Nathalie      155
+## 3  1968 F     Nathalie      164
+## 4  1967 M     Christophe    150
+## 5  1966 F     Nathalie      156
+```
+
+```r
+top_n(p,-5,NOMBRE) # qui marche aussi en "bottom_n"
+```
+
+```
+## # A tibble: 50,165 x 4
+##    ANNEE SEXE  PRENOM    NOMBRE
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;
+##  1  2019 M     Diadié         1
+##  2  2019 M     Edaiin         1
+##  3  2019 M     Sebastian      1
+##  4  2019 F     Elia           1
+##  5  2019 F     Raquel         1
+##  6  2019 M     Kôme           1
+##  7  2019 M     Mantas         1
+##  8  2019 F     Mylana         1
+##  9  2019 M     Tymaë          1
+## 10  2019 F     Jihane         1
+## # … with 50,155 more rows
+```
+
+---
+
+#### Pipe pour chaîner tout ça
+
+L'opérateur `%&gt;%` est appelé **le pipe**. Il s'agit d'un outil permettant de "passer" la sortie d'une fonction en entrée d'une autre. Elle est également dispo avec le raccourci : `Ctrl + Shift + m`.
+
+Cet opérateur permet de créer des chaînes de commandes et, ainsi, d'éviter les matriochkas ou les variables intermédiaires.
+
+
+```r
+prenoms %&gt;% filter(SEXE == "F", ANNEE &lt; 2001) %&gt;% 
+  select(PRENOM,ANNEE,NOMBRE) %&gt;% 
+  top_n(10, NOMBRE)
+```
+
+```
+## # A tibble: 10 x 3
+##    PRENOM    ANNEE NOMBRE
+##    &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Valérie    1969    133
+##  2 Nathalie   1965    155
+##  3 Nathalie   1969    133
+##  4 Nathalie   1968    164
+##  5 Nathalie   1967    132
+##  6 Nathalie   1966    156
+##  7 Sylvie     1963    128
+##  8 Stéphanie  1974    127
+##  9 Valérie    1966    130
+## 10 Nathalie   1964    140
+```
+
+
+---
+
+### Group_by et summarise : pour synthétiser
+
+Les fonctions `group_by` et `summarise` fonctionne en tandem :
+* `group_by` sert à constituer des groupes suivant les valeurs des variables au sein d'une structure de données ;
+* `summarise` permet de créer des variables de synthèse sur la base des observations ainsi "groupées".
+
+
+```r
+# je me concentre ici sur les prénoms masculins
+p %&gt;% filter(SEXE == "M") %&gt;% 
+  group_by(ANNEE) %&gt;%         # je groupe par année
+  summarise(n = n()) %&gt;%      # je compte le nombre d'obs
+  arrange(desc(n))            # je tri par n
+```
+
+```
+## # A tibble: 92 x 2
+##    ANNEE     n
+##    &lt;dbl&gt; &lt;int&gt;
+##  1  2018  1077
+##  2  2016  1068
+##  3  2017  1046
+##  4  2015   987
+##  5  2013   979
+##  6  2014   968
+##  7  2012   948
+##  8  2011   942
+##  9  2010   919
+## 10  2019   918
+## # … with 82 more rows
+```
+
+---
+
+#### Group_by et summarise 2
+
+Il est possible de grouper par plusieurs variables :
+
+
+```r
+# nous allons nous intéresser aux prénoms qui commencent par un K
+p %&gt;% filter(str_detect(PRENOM, "^K")) %&gt;% 
+  group_by(ANNEE,SEXE) %&gt;% # nous groupons ensuite par année et sexe
+  # et faisons la somme des enfants nommés ainsi
+  summarise(effectif = sum(NOMBRE)) %&gt;%
+  arrange(desc(ANNEE))
+```
+
+```
+## # A tibble: 136 x 3
+## # Groups:   ANNEE [73]
+##    ANNEE SEXE  effectif
+##    &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+##  1  2019 F           70
+##  2  2019 M           73
+##  3  2018 F           66
+##  4  2018 M           77
+##  5  2017 F           72
+##  6  2017 M           68
+##  7  2016 F           63
+##  8  2016 M           66
+##  9  2015 F           71
+## 10  2015 M           63
+## # … with 126 more rows
+```
+
+
+---
+
+background-image: url("https://media.giphy.com/media/3jmfMCLZkU5SyNXDf6/giphy.gif")
+class: center, top, inverse
+
+# Et dans deux semaines ...
+
+---
+
+## Programme du cours 3
+
+* Tidyr, pour bien ranger ses données ;
+* ggplot, pour visualiser ses résultats ;
+* web-scraping / PDF-scraping en R ;
+* l'EDA, analyse exploratoire de données.
+
+---
+class: inverse, center, middle
+
+# Merci !
+
+
+Contact : [sylvainlapoix@gmail.com](mailto:sylvainlapoix@gmail.com) ou via WhatsApp.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
