@@ -25,17 +25,15 @@ class: center, top, inverse
 #### Rendu
 Je vous demande de me rendre vos exercices sous formes d'un dossier compressé contenant :
 * un script .R nommé de façon explicite ;
-* un dossier /data contenant les données utilisées (< 10Mo). S'il s'agit d'un subset, je vous demande de préciser les manipulations réalisées.
+* un dossier /data contenant les données utilisées (< 10Mo au total). S'il s'agit d'un subset, je vous demande de préciser les manipulations réalisées ;
+* un dossier /graph si des graphs ont été demandés.
 
-#### Observation
+Le rendu attendu de ces exercices est un fichier zip nommé : "exo${numéro de l'exercice}_${vos initiales}". *Par exemple : "**exo01_sl**" pour mon rendu de l'exercice numéro 1.*
+
+Vous trouverez un dossier type dans ce répertoire sous ce nom.
+
+#### Commentaires
 Vos observations et points de méthodologie seront reportées en commentaire dans le fichier R. Outre vos hypothèses et vos arbitrages, vous êtes encouragé·e·s à intégrer vos blocages : **documentez vos erreurs !**
-
-
-#### Format
-Le rendu attendu de ces exercices est un fichier zip nommé :
-"exo${numéro de l'exercice}_${vos initiales}".
-
-*Par exemple : "exo01_sl" pour mon rendu de l'exercice numéro 1.*
 
 ---
 
