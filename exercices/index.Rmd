@@ -1,0 +1,68 @@
+---
+title: "IPJ - Datajournalisme"
+subtitle: "Exercice : consignes"
+author: "Sylvain Lapoix"
+date: "18/11/2019"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+---
+
+background-image: url("https://media.giphy.com/media/fQGf2FTKayOnKjwidV/giphy.gif")
+class: center, top, inverse
+
+# Rendu des exercices
+
+---
+
+## Restitution
+
+#### Rendu
+Je vous demande de me rendre vos exercices sous formes d'un dossier compressé contenant :
+* un script .R nommé de façon explicite ;
+* un dossier /data contenant les données utilisées (< 10Mo). S'il s'agit d'un subset, je vous demande de préciser les manipulations réalisées.
+
+#### Observation
+Vos observations et points de méthodologie seront reportées en commentaire dans le fichier R. Outre vos hypothèses et vos arbitrages, vous êtes encouragé·e·s à intégrer vos blocages : **documentez vos erreurs !**
+
+
+#### Format
+Le rendu attendu de ces exercices est un fichier zip nommé :
+"exo${numéro de l'exercice}_${vos initiales}".
+
+*Par exemple : "exo01_sl" pour mon rendu de l'exercice numéro 1.*
+
+---
+
+## Exercice 1
+
+**Vous choisirez un des quatre fichiers** de l'édition 2018 de [la base des accidents corporels de la circulation](https://www.data.gouv.fr/fr/datasets/base-de-donnees-accidents-corporels-de-la-circulation/) : vehicules, usagers, lieux ou caractéristiques.
+
+En vous appuyant sur la documentation fournie sur data.gouv.fr, **vous formulerez trois interrogations journalistiques** que vous traduirez en hypothèses et réaliserez les manipulations nécessaires pour les vérifier. Les résultats de ces manipulations sont attendus **mardi 26 novembre 2019 à midi** au format spécifié plus haut.
+
+#### Précisions
+* **Il s'agit d'une première exploration**. Au delà d'un simple décompte, des analyses des relations entre les variables seront largement suffisantes. Je n'attends pas de révélation fracassante. L'essentiel est la cohérence entre questions, base de données et manipulations.
+* **Il n'est en aucun cas attendu un résultat conclusif et définitif**. L'intérêt ici est de vous encourager à manipuler les données et à transformer vos interrogations journalistiques en manipulations de données.
+
+---
+
+
+background-image: url("https://media.giphy.com/media/pHXeYveikVLIvx7AtF/giphy.gif")
+class: center, top, inverse
+
+# Rappel : ceci est du journalisme
+
+---
+class: inverse, center, middle
+
+# Merci !
+
+
+Contact : [sylvainlapoix@gmail.com](mailto:sylvainlapoix@gmail.com) ou via WhatsApp.
+
+

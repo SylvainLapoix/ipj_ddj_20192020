@@ -35,12 +35,21 @@ Ce cours se déroule dans le cadre du master journalisme de l'[Institut Pratique
 ## Support
 
 * Cours01 : [R, votre nouvel outil](https://sylvainlapoix.github.io/ipj_ddj_20192020/cours01/#1) (en cours de mise à jour)
-* Cours02 : [Traitement de la donnée](https://sylvainlapoix.github.io/ipj_ddj_20192020/cours02/#2).
+* Cours02 : [Traitement de la donnée](https://sylvainlapoix.github.io/ipj_ddj_20192020/cours02/#1).
+
+* Exercices 
+  * [consignes](https://sylvainlapoix.github.io/ipj_ddj_20192020/exercices/#3) ;
+  * [exercice01](https://sylvainlapoix.github.io/ipj_ddj_20192020/exercices/#4).
 
 ## Bases de données utilisées
 
 ### Cours01 et Cours02
 * [Prénoms des enfants nés à Orléans de 1928 à aujourd'hui](https://www.data.gouv.fr/fr/datasets/prenoms-des-enfants-nes-a-orleans-de-1928-a-aujourdhui-orleans-metropole/#_), Orléans Métropole.
 
+### Exercice01
+* [Base de données accidents corporels de la circulation](https://www.data.gouv.fr/fr/datasets/base-de-donnees-accidents-corporels-de-la-circulation/), Ministère de l'Intérieur.
+
 ## Références
 
+* les raccourcis claviers de Rstudio : [Keyboard shortcuts, Rstudio](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts) ;
+* quelques "feuilles de triches" des packages R (notamment tidyverse) : [Rstudio Cheat Sheets, Rstudio](https://rstudio.com/resources/cheatsheets/).
